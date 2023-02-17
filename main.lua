@@ -1,8 +1,20 @@
-require ("theneededingredients")
+require ("StatesAndFiles")
 
+function love.mousepressed(x, y, button)
+    -- Pass the mouse click coordinates to the handleMouseClick function
+    handleMouseClick(x, y)
+end
+
+function love.keypressed(key)
+    -- Pass the key pressed to the handleKeyPress function
+    handleKeyPress(key)
+end
 
 function love.load()
-    pushState(exampleState)
+
+    push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = true})
+
+    pushState(Menu)
 end
 
 function love.update(dt)
@@ -11,6 +23,9 @@ function love.update(dt)
 end
 
 function love.draw()
+    push:start()
     currentState:draw()
+    push:finish()
+   
 end
 

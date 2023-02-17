@@ -8,7 +8,7 @@ function statetwo:update(dt)
     timer = timer + dt
     if timer > 0.5 then
         timer = 0
-        pushState(exampleState)
+        pushState(Menu)
     end
 end
 
