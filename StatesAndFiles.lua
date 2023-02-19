@@ -8,7 +8,9 @@ windowWidth, windowHeight = love.window.getDesktopDimensions()
 
 
 
+
+
 require("stackState")
 require("Menu")
-require("statetwo")
-require("Functions")
+require("Settings")
+require("ButtonFunctions")
