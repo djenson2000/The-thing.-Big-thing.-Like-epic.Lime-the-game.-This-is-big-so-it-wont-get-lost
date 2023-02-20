@@ -23,7 +23,7 @@ function handleMouseClick(x, y)
     if x >= button.x and x <= button.x + button.width and y >= button.y and y <= button.y + button.height then
         -- The button has been clicked, so do something (e.g. print a message)
         print("Button clicked!")
-        pushState(setttings)
+        pushState(settings)
     end
 end
 
