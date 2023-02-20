@@ -1,7 +1,7 @@
 stackState = {}
 
 function pushState(newState, params)
-    newState:enter(params)
+    
     table.insert(stackState, newState)
 end
 

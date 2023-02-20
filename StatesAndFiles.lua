@@ -1,4 +1,8 @@
 push = require("push")
+require("stackState")
+require("Menu")
+require("settings")
+require("ButtonFunctions")
 
 
 
@@ -9,8 +13,3 @@ windowWidth, windowHeight = love.window.getDesktopDimensions()
 
 
 
-
-require("stackState")
-require("Menu")
-require("Settings")
-require("ButtonFunctions")
