@@ -1,10 +1,21 @@
 Menu = {}
 mouse = {}
-require ("MenuButtonLogic")
 
-function Menu:enter()end
 
-function Menu:exit()end
+require ("menuButtons")
+
+
+function Menu:enter()
+print("Starting Menu Enter tasks")
+makeMenuButtonClickable()
+print ("Finsished Menu Enter Tasks")
+end
+
+function Menu:exit()
+print ("Starting menu exit tasks")
+makeMenuButtonUnclickable()
+print ("finishing menu exit tasks")
+end
 
 function Menu:update(dt)
     
@@ -17,17 +28,26 @@ function Menu:update(dt)
 
 end
 
-function love.mousepressed(x, y)
-    -- Pass the mouse click coordinates to the handleMouseClick function
-    handleMouseClick(x, y, Menu_to_settings_BUTTON)
-end
-
-
 function Menu:draw()
-    drawButton(button)
+    drawButton(Menu_to_settings_BUTTON)
     love.graphics.setColor(255, 255, 255)
     love.graphics.print("Mouse Coordinates: " .. mouse.x .. ", " .. mouse.y)
 end
+
+
+
+
+
+
+
+
+
+function love.keypressed(key)
+    -- Pass the key pressed to the handleKeyPress function
+    handleMenuKeyPress(key)
+
+end
+
 
 
 

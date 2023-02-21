@@ -1,7 +1,7 @@
 stackState = {}
 
 function pushState(newState, params)
-    
+    newState:enter()
     table.insert(stackState, newState)
 end
 
@@ -10,7 +10,7 @@ function popState()
     return table.remove(stackState)
 end
 
-function changeState(newState)
+function changeState(newState, OldState)
     popState()
     pushState(newState)
 end

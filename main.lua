@@ -32,3 +32,9 @@ function love.keypressed(key)
     handleKeyPress(key)
 end
 
+function love.mousepressed(x, y)
+    -- Pass the mouse click coordinates to the handleMouseClick function
+    print ("Mouse presses at",x,y )
+    handleMouseClick(x, y, Menu_to_settings_BUTTON)
+end
+
