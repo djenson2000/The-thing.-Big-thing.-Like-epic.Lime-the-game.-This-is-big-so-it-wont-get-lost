@@ -25,10 +25,7 @@ function love.draw()
    
 end
 
-function love.mousepressed(x, y, button)
-    -- Pass the mouse click coordinates to the handleMouseClick function
-    handleMouseClick(x, y)
-end
+
 
 function love.keypressed(key)
     -- Pass the key pressed to the handleKeyPress function
