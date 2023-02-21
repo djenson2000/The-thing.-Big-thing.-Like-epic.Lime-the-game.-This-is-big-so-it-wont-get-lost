@@ -10,6 +10,11 @@ function Menu:update(dt)
     
     mouse.x, mouse.y = love.mouse.getPosition()
 
+    if love.keyboard.isDown("escape") then
+        print("escape key is down in Menu, aborting program(self destruct)")
+        love.event.quit()
+    end
+
 end
 
 function love.mousepressed(x, y)
