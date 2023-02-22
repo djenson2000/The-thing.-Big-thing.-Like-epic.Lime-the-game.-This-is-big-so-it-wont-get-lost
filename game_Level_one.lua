@@ -22,16 +22,19 @@ end
 
 
 -- Load the tileset image
-local tilesetImage = love.graphics.newImage("mainlev_build.png")
+local tilesetImage = love.graphics.newImage("test.png")
 
 -- Define the tile width and height
 local tileWidth, tileHeight = 16, 16
 
 -- Define the tileset quads
+
 local tilesetQuads = {}
 for y = 0, tilesetImage:getHeight() - tileHeight, tileHeight do
     for x = 0, tilesetImage:getWidth() - tileWidth, tileWidth do
-        table.insert(tilesetQuads, love.graphics.newQuad(x, y, tileWidth, tileHeight, tilesetImage:getDimensions()))
+        local quad = love.graphics.newQuad(x, y, tileWidth, tileHeight, tilesetImage:getDimensions())
+        table.insert(tilesetQuads, quad)
+        print("Inserted quad:", quad)
     end
 end
 
@@ -55,7 +58,7 @@ function game_Level_one:draw()
     for y = 1, mapHeight do
         for x = 1, mapWidth do
             local tile = map[y][x]
-            love.graphics.draw(tilesetImage, tilesetQuads[tile], (x - 1) * tileWidth + mapX, (y - 1) * tileHeight + mapY)
+            love.graphics.draw(tilesetImage, tilesetQuads[tile +1], (x - 1) * tileWidth + mapX, (y - 1) * tileHeight + mapY)
         end
     end
 end
