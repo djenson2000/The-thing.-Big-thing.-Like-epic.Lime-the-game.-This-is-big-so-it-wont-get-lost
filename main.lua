@@ -13,7 +13,7 @@ end
 function love.update(dt)
     currentState = stackState[#stackState]
     currentState:update(dt)
-    
+    mouse.x, mouse.y = love.mouse.getPosition()
 end
 
 function love.draw()
@@ -21,6 +21,7 @@ function love.draw()
     push:start()
     currentState:draw()
     push:finish()
+    love.graphics.print("Mouse Coordinates: " .. mouse.x .. ", " .. mouse.y)
     
    
 end
@@ -36,7 +37,11 @@ end
 function love.mousepressed(x, y)
     -- Pass the mouse click coordinates to the handleMouseClick function
     print ("Mouse presses at",x,y )
+    print ("adjusting for push")
+    newx = (x *0.7)
+    newy = (y * 0.7)
+    print ("adjusted mouse presses =",newx,newy)
     
-    menuButtonChecker(x, y)
+    menuButtonChecker(newx, newy)
 end
 

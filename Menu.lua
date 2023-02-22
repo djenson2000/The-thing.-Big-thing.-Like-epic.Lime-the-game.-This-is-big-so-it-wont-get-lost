@@ -19,7 +19,7 @@ end
 
 function Menu:update(dt)
     
-    mouse.x, mouse.y = love.mouse.getPosition()
+    
 
     if love.keyboard.isDown("escape") then
         print("escape key is down in Menu, aborting program(self destruct)")
@@ -37,6 +37,7 @@ end
 function Menu:draw()
     drawButton(Menu_to_settings_BUTTON)
     drawButton(Menu_label_BUTTON)
+    drawButton(Menu_To_Level_One_BUTTON)
     love.graphics.setColor(255, 255, 255)
     
 end

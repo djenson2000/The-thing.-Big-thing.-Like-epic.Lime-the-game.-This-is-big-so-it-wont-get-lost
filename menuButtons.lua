@@ -49,6 +49,10 @@ function menuButtonChecker(x, y)
         if clickedButton then
             -- The button was clicked, so do something here
             print("Clicked button:", clickedButton.name)
+            if clickedButton.name == ("MenuTosettings") then
+            pushState(settings)
+            end
+            
             break
         end
     end
@@ -68,12 +72,14 @@ end
 
 function makeMenuButtonClickable()
 Menu_to_settings_BUTTON.clickable = true
+Menu_To_Level_One_BUTTON.clickable = true
 print ("Menu buttons are now available")
 
 end
 
 function makeMenuButtonUnclickable()
 Menu_to_settings_BUTTON.clickable = false
+Menu_To_Level_One_BUTTON.clickable = false
 print("Menu buttons are now unavailible")
 
 end
