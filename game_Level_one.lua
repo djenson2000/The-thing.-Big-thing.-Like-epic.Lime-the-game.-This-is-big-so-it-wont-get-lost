@@ -1,19 +1,21 @@
 game_Level_one = {}
 
+require("level_oneButtons")
+
 function game_Level_one:enter()
-    print("Starting Menu Enter tasks")
-    makeMenuButtonClickable()
-    print ("Finsished Menu Enter Tasks")
+    print("Starting LevelOne Enter tasks")
+    makeLevelOneButtonClickable()
+    print ("Finsished LevelOne Enter Tasks")
 end
     
 function game_Level_one:exit()
-    print ("Starting menu exit tasks")
-    makeMenuButtonUnclickable()
-    print ("finishing menu exit tasks")
+    print ("Starting LevelOne exit tasks")
+    makeLevelOneButtonUnclickable()
+    print ("finishing LevelOne exit tasks")
 end
 
 
-function Menu:update(dt)
+function game_Level_one:update(dt)
 
 end
 

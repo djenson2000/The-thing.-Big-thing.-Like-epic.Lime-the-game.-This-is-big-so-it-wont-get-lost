@@ -10,3 +10,10 @@ Back_to_menu_BUTTON = {
     clickable = false
 }
 
+function makeLevelOneButtonClickable()
+    Back_to_menu_BUTTON.clickable = true
+end
+
+function makeLevelOneButtonUnclickable()
+    Back_to_menu_BUTTON.clickable = false
+end

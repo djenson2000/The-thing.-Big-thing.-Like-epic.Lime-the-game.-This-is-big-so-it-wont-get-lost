@@ -23,6 +23,7 @@ function settings:draw()
     love.graphics.setColor(0,1,1)
     love.graphics.rectangle("fill",20,20,800,800)
     drawButton(Back_to_menu_BUTTON)
+    drawButton(Mute_sound_BUTTON)
 end
 
 function love.mousepressed(x, y)
@@ -30,7 +31,7 @@ function love.mousepressed(x, y)
     handlesettingsMouseClick(x, y, Back_to_menu_BUTTON)
 end
 
-require ("settingsButtons")
+
 
 function handlesettingsMouseClick(x, y, Back_to_menu_BUTTON)
     -- Check if the mouse click is within the button's bounds

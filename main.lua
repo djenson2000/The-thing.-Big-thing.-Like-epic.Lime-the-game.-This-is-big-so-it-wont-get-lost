@@ -43,5 +43,6 @@ function love.mousepressed(x, y)
     print ("adjusted mouse presses =",newx,newy)
     
     menuButtonChecker(newx, newy)
+    settingsButtonChecker(newx, newy)
 end
 
