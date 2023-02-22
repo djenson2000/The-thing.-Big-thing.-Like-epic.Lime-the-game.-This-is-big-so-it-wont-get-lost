@@ -28,13 +28,26 @@ function handleKeyPress(key)
         end
 end
 
-function handleMouseClick(x, y, Menu_to_settings_BUTTON)
-    -- Check if the mouse click is within the button's bounds
-    if x >= Menu_to_settings_BUTTON.x and x <= Menu_to_settings_BUTTON.x + Menu_to_settings_BUTTON.width and y >= Menu_to_settings_BUTTON.y and y <= Menu_to_settings_BUTTON.y + Menu_to_settings_BUTTON.height and Menu_to_settings_BUTTON.clickable == true then
-        -- The button has been clicked
-        print("settings Button clicked!") --This is only visible in console and helps with debugging
-        changeState(settings, Menu)
 
-    end
+
+
+
+    
+
+function isWithinBounds(x, y, button)
+    print("Checking if click is within bounds...")
+    
+        print("Checking button", button.name,"here are the buttons values: Clickable=",button.clickable,"buttons x value =",button.x,"buttons y value=",button.y,"buttons width =",button.width,"buttons hight =",button.height)
+        if button.x and button.y and button.width and button.height and button.clickable then
+            if x >= button.x and x <= button.x + button.width and y >= button.y and y <= button.y + button.height then
+                print("Button", button.name, "was clicked!")
+                return button
+            end
+        else
+            print("ERROR -- All required properties not found for button", button.name)
+            return nil
+        end
+    
+    print("Click is not within bounds of any button")
+    return nil
 end
-

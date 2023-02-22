@@ -1,0 +1,16 @@
+menu_buttons = {Menu_To_Level_One_BUTTON, Menu_to_settings_BUTTON}
+
+function menuButtonChecker(x, y)
+    print("menuButtonChecker is in use")
+    for _, button in pairs(menu_buttons) do
+        print("Checking button:", button.name)
+        local clickedButton = isWithinBounds(x, y, button)
+        if clickedButton then
+            -- The button was clicked, so do something here
+            print("Clicked button:", clickedButton.name)
+            break
+        end
+    end
+end
+
+love.graphics.print("Mouse Coordinates: " .. mouse.x .. ", " .. mouse.y)

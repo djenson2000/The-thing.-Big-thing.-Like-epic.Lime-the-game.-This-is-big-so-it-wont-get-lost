@@ -24,14 +24,21 @@ function Menu:update(dt)
     if love.keyboard.isDown("escape") then
         print("escape key is down in Menu, aborting program(self destruct)")
         love.event.quit()
+    elseif love.keyboard.isDown("return") then
+        print ("enter key pressed, entering level one")
+        changeState(game_Level_one, Menu)
+
+
     end
+
 
 end
 
 function Menu:draw()
     drawButton(Menu_to_settings_BUTTON)
+    drawButton(Menu_label_BUTTON)
     love.graphics.setColor(255, 255, 255)
-    love.graphics.print("Mouse Coordinates: " .. mouse.x .. ", " .. mouse.y)
+    
 end
 
 
@@ -42,11 +49,7 @@ end
 
 
 
-function love.keypressed(key)
-    -- Pass the key pressed to the handleKeyPress function
-    handleMenuKeyPress(key)
 
-end
 
 
 
