@@ -52,7 +52,7 @@ function menuButtonChecker(x, y)
             if clickedButton.name == ("MenuTosettings") then
             pushState(settings)
             elseif clickedButton.name == ("MenuToLevelone") then
-            pushState(game_Level_one)
+            pushState(levelOne)
             end
             
             
