@@ -15,11 +15,11 @@ spriteWidth, spriteHeight = spriteImage:getDimensions()
 --Theres are used to store the velocitys of the sprite for both x and y
 spriteVelX, spriteVelY = 0, 0
 
-spriteMaxVelPosX = 100
+spriteMaxVelPosX = 200
 
-spriteMaxVelNegX = -100
+spriteMaxVelNegX = -200
 
-floorFriction = 20
+floorFriction = 10
 
 gravityStrenth = 10 
 
@@ -37,7 +37,7 @@ collisionLeft, collisionRight, collisionUp, collisionDown  = false, false, false
 
 VelocityDecayTimer = 0.00001
 
-VelocityDecayConstant = 500
+VelocityDecayConstant = 0.05
 
 collisionTileWidth, collisionTileHeight = 64, 64
 
@@ -68,12 +68,14 @@ function levelOne:update(dt)
         changeState(Menu)
     end
     collisionLeft, collisionRight, collisionUp, collisionDown  = false
+    SpriteCollisionChecker()
     SpriteVelocityCalculator()
     SpriteVelocityDecay()
-    SpriteCollisionChecker()
+    
     SpriteCollision()
     spriteX = spriteX + (spriteVelX * dt)
     spriteY = spriteY + (spriteVelY * dt)
+    
 end
 
 
@@ -81,47 +83,52 @@ end
 
 
 function SpriteCollision()
-    if collisionDown or collisionUp == true then
+    if (collisionDown or collisionUp) and (collisionLeft or collisionRight) then
+        spriteVelX = 0
+        spriteVelY = 0
+    elseif collisionDown or collisionUp then
         spriteVelY = 0 
-    end
-    if collisionLeft or collisionRight == true then 
+    elseif collisionLeft or collisionRight then 
         spriteVelX = 0
     end
-
 end
 
+
 function SpriteVelocityDecay()
-    if love.keyboard.isDown("left") then 
-        print("Left arrow key inputting movement, not decaying velocity")
-        VelocityDecayTimer = 0
-    else
-        if love.keyboard.isDown("right") then
+    if VelocityDecayTimer > VelocityDecayConstant then
+        if love.keyboard.isDown("left") then 
+            print("Left arrow key inputting movement, not decaying velocity")
+            VelocityDecayTimer = 0
+        elseif love.keyboard.isDown("right") then
             print("right arrow key inputting movement, not decaying velocity")
             VelocityDecayTimer = 0
         else
-            print("no input on x axis, decaying velocity")
-            if VelocityDecayTimer > VelocityDecayConstant then
-              
-                if spriteVelX > 0 then
-                    if spriteVelX - floorFriction < 0 then
-                        spriteVelX = 0    
-                    elseif spriteVelX - floorFriction > 0 then
-                            spriteVelX = spriteVelX - floorFriction      
-                    else 
-                            print("ERROR - SpriteVelocityDecay had a condition that should not be possible")  
-                    end
+           
+            if spriteVelX > 0 then
+                if spriteVelX - floorFriction < 0 then
+                    spriteVelX = 0.00  
+                    
+                elseif spriteVelX - floorFriction > 0 then
+                    spriteVelX = spriteVelX - floorFriction      
+                    
+                else 
+                    print("ERROR - SpriteVelocityDecay had a condition that should not be possible")  
+                    spriteVelX = 0
                 end
-                if spriteVelX < 0 then
-                    if spriteVelX + floorFriction > 0 then
-                        spriteVelX = 0
-                    elseif spriteVelX + floorFriction < 0 then
-                        spriteVelX = spriteVelX + floorFriction
-                    else
-                        print("ERROR - SpriteVelocityDecay had a condition that should not be possible") 
-                    end
-                end
-                VelocityDecayTimer = 0
             end
+            if spriteVelX < 0 then
+                if spriteVelX + floorFriction > 0 then
+                    spriteVelX = 0.00
+                    
+                elseif spriteVelX + floorFriction < 0 then
+                    spriteVelX = spriteVelX + floorFriction
+                   
+                else
+                    print("ERROR - SpriteVelocityDecay had a condition that should not be possible") 
+                    spriteVelX = 0
+                end
+            end
+            VelocityDecayTimer = 0
         end
     end
 end
