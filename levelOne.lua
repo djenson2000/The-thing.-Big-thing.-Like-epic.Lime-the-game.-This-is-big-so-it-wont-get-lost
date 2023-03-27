@@ -7,13 +7,13 @@ require("levelOneMap")
 spriteImage = love.graphics.newImage("iamtesting.png")
 
 -- Define the sprite position
-spriteX, spriteY = 50
+spriteX, spriteY = 50, 50
 
 -- Define the sprite dimensions
 spriteWidth, spriteHeight = spriteImage:getDimensions()
 
 --Theres are used to store the velocitys of the sprite for both x and y
-spriteVelX, spriteVelY = 0
+spriteVelX, spriteVelY = 0, 0
 
 spriteMaxVelPosX = 100
 
@@ -29,11 +29,11 @@ jumpVel = 100
 mapX, mapY = 0, 0
 
 -- Might be used for fall damage
-momentumX, momentumY = 0
+momentumX, momentumY = 0, 0
 
-acceleration = 20
+acceleration = 2
 
-collisionLeft, collisionRight, collisionUp, collisionDown  = false
+collisionLeft, collisionRight, collisionUp, collisionDown  = false, false, false, false
 
 VelocityDecayTimer = 0.00001
 
@@ -70,18 +70,23 @@ function levelOne:update(dt)
     collisionLeft, collisionRight, collisionUp, collisionDown  = false
     SpriteVelocityCalculator()
     SpriteVelocityDecay()
-    print (ve)
-
+    SpriteCollisionChecker()
+    SpriteCollision()
+    spriteX = spriteX + (spriteVelX * dt)
+    spriteY = spriteY + (spriteVelY * dt)
 end
 
 
 
 
 
-function SpriteMover()
-
-    
-
+function SpriteCollision()
+    if collisionDown or collisionUp == true then
+        spriteVelY = 0 
+    end
+    if collisionLeft or collisionRight == true then 
+        spriteVelX = 0
+    end
 
 end
 
