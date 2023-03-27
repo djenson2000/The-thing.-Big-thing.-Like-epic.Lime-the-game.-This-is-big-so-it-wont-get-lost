@@ -10,7 +10,7 @@ function popState()
     return table.remove(stackState)
 end
 
-function changeState(newState, OldState)
+function changeState(newState)
     popState()
     pushState(newState)
 end

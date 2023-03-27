@@ -1,4 +1,4 @@
-require ("buttons")
+
 require ("level_oneButtons")
 require ("menuButtons")
 require ("settingsButtons")
@@ -16,17 +16,6 @@ function drawButton(button)
     love.graphics.printf(button.text, button.x, button.y + button.height/2 - button.font:getHeight()/2, button.width, "center")
 end
 
-
-
-function handleKeyPress(key)
-    -- Check if the key pressed is the "enter" key
-    
-        if key == "return" then
-            -- The button has been "pressed", so do something (e.g. print a message)
-            print("Enter key pressed pressed!")
-    
-        end
-end
 
 
 
