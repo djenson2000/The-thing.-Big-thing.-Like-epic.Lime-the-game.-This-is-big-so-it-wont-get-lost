@@ -4,10 +4,11 @@ require("Menu")
 require("settings")
 require("ButtonFunctions")
 require("game_Level_one")
+require("levelOne")
 
 
 
-gameWidth, gameHeight = 960, 540 --fixed game resolution
+gameWidth, gameHeight = 1920,1080 --fixed game resolution
 windowWidth, windowHeight = love.window.getDesktopDimensions()
 
 

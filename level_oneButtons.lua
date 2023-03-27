@@ -12,8 +12,10 @@ Back_to_menu_BUTTON = {
 
 function makeLevelOneButtonClickable()
     Back_to_menu_BUTTON.clickable = true
+    print ("level one buttons are now available")
 end
 
 function makeLevelOneButtonUnclickable()
     Back_to_menu_BUTTON.clickable = false
+    print ("level one buttons are now unavailable")
 end
