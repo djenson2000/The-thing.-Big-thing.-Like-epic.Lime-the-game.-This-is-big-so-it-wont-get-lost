@@ -23,7 +23,7 @@ floorFriction = 10
 
 gravityStrenth = 10 
 
-jumpVel = 100
+jumpVel = 300
 
 -- Where the map begins to draw
 mapX, mapY = 0, 0
@@ -41,7 +41,7 @@ VelocityDecayConstant = 0.05
 
 collisionTileWidth, collisionTileHeight = 64, 64
 
-collisionDistance = 5
+collisionDistance = 10
 
 
 
@@ -69,10 +69,12 @@ function levelOne:update(dt)
     if handleKeyPress("escape") then
         changeState(Menu)
     end
-    collisionLeft, collisionRight, collisionUp, collisionDown  = false
+    collisionLeft, collisionRight, collisionUp, collisionDown  = false, false, false, false
     SpriteCollisionChecker()
     SpriteCollision()
     
+    SpriteGravity()
+
     SpriteVelocityCalculator()
 
     SpriteVelocityDecay()
@@ -153,6 +155,18 @@ function SpriteVelocityDecay()
 end
 
 
+function SpriteGravity()
+
+    if collisionDown == false then 
+        print("gravity going down, vely = "..spriteVelY)
+        spriteVelY = spriteVelY + gravityStrenth 
+    else
+        spriteVelY = 0 
+        print("collisiondown")
+    end
+
+end
+
 
 
 
@@ -183,7 +197,7 @@ function SpriteVelocityCalculator()
 
     if love.keyboard.isDown("space") then
         if spriteVelY == 0 then --Stop jumping happening when the last jump is already in action
-            spriteVelY = spriteVelY + jumpVel 
+            spriteVelY = spriteVelY - jumpVel 
         end
     end
 
