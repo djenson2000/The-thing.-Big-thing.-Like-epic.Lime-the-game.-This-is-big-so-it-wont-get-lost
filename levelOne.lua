@@ -7,7 +7,7 @@ require("levelOneMap")
 spriteImage = love.graphics.newImage("iamtesting.png")
 
 -- Define the sprite position
-spriteX, spriteY = 50, 50
+spriteX, spriteY = 70, 70
 
 -- Define the sprite dimensions
 spriteWidth, spriteHeight = spriteImage:getDimensions()
@@ -41,7 +41,9 @@ VelocityDecayConstant = 0.05
 
 collisionTileWidth, collisionTileHeight = 64, 64
 
-spriteX, spriteY = 64, 64
+collisionDistance = 5
+
+
 
 
 
@@ -61,7 +63,7 @@ end
 
 
 function levelOne:update(dt)
-    timer = timer + dt
+  
     VelocityDecayTimer = VelocityDecayTimer + dt
     
     if handleKeyPress("escape") then
@@ -69,10 +71,14 @@ function levelOne:update(dt)
     end
     collisionLeft, collisionRight, collisionUp, collisionDown  = false
     SpriteCollisionChecker()
-    SpriteVelocityCalculator()
-    SpriteVelocityDecay()
-    
     SpriteCollision()
+    
+    SpriteVelocityCalculator()
+
+    SpriteVelocityDecay()
+
+    
+    
     spriteX = spriteX + (spriteVelX * dt)
     spriteY = spriteY + (spriteVelY * dt)
     
@@ -83,14 +89,27 @@ end
 
 
 function SpriteCollision()
-    if (collisionDown or collisionUp) and (collisionLeft or collisionRight) then
-        spriteVelX = 0
-        spriteVelY = 0
-    elseif collisionDown or collisionUp then
-        spriteVelY = 0 
-    elseif collisionLeft or collisionRight then 
-        spriteVelX = 0
+    if (collisionDown) then
+        if spriteVelY > 0 then
+            spriteVelY = 0
+        end
     end
+    if collisionUp then
+        if spriteVelY < 0 then
+            spriteVelY = 0
+        end
+    end
+    if collisionLeft then
+        if spriteVelX < 0 then
+            spriteVelX = 0
+        end
+    end
+    if collisionRight then
+        if spriteVelX > 0 then
+            spriteVelX = 0
+        end
+    end
+   
 end
 
 
@@ -140,8 +159,8 @@ end
 
 
 function SpriteVelocityCalculator()
-    if love.keyboard.isDown("right") and not collisionRight then
-        
+    if love.keyboard.isDown("right") then -- and collisionRight == false
+        print("key right down")
         if (spriteVelX + acceleration) < spriteMaxVelPosX then 
             spriteVelX = spriteVelX + acceleration 
             print ("spriteVelX increaced to", spriteVelX)
@@ -152,8 +171,8 @@ function SpriteVelocityCalculator()
         end
     end
 
-    if love.keyboard.isDown("left") and not collisionLeft then
-        if spriteVelX + acceleration < spriteMaxVelNegX then
+    if love.keyboard.isDown("left") and collisionLeft == false then
+        if spriteVelX + acceleration > spriteMaxVelNegX then
             spriteVelX = spriteVelX - acceleration 
             print ("spriteVelX decreced to", spriteVelX)
         else
@@ -173,12 +192,12 @@ end
 
 function SpriteCollisionChecker()
     -- Determine the indices of the collision tiles that the sprite intersects with
-    local spriteLeftIndex = math.floor(spriteX / collisionTileWidth) + 1
-    local spriteRightIndex = math.floor((spriteX + spriteWidth) / collisionTileWidth) + 1
-    local spriteTopIndex = math.floor(spriteY / collisionTileHeight) + 1
-    local spriteBottomIndex = math.floor((spriteY + spriteHeight) / collisionTileHeight) + 1
+    local spriteLeftIndex = math.floor((spriteX - collisionDistance) / collisionTileWidth) + 1
+    local spriteRightIndex = math.floor(((spriteX + collisionDistance) + spriteWidth) / collisionTileWidth) + 1
+    local spriteTopIndex = math.floor((spriteY - collisionDistance) / collisionTileHeight) + 1
+    local spriteBottomIndex = math.floor(((spriteY + collisionDistance) + spriteHeight) / collisionTileHeight) + 1
     
-    local collisionLeft, collisionRight, collisionUp, collisionDown = false, false, false, false
+
     
     -- Check if the sprite intersects with any solid tiles
     for y = spriteTopIndex, spriteBottomIndex do
@@ -188,12 +207,12 @@ function SpriteCollisionChecker()
                 local tileX = (x - 1) * collisionTileWidth
                 local tileY = (y - 1) * collisionTileHeight
                 
-                if spriteX + spriteWidth > tileX and spriteX < tileX then
-                    print("Collision Left")
-                    collisionLeft = true
-                elseif spriteX < tileX + collisionTileWidth and spriteX + spriteWidth > tileX + collisionTileWidth then
+                if spriteX + spriteWidth < tileX and spriteX < tileX then
                     print("Collision Right")
                     collisionRight = true
+                elseif spriteX < tileX + collisionTileWidth and spriteX + spriteWidth > tileX + collisionTileWidth then
+                    print("Collision Left")
+                    collisionLeft = true
                 end
                 
                 if spriteY + spriteHeight > tileY and spriteY < tileY then
