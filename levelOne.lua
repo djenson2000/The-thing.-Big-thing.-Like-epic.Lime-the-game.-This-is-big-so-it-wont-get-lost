@@ -15,7 +15,7 @@ spriteWidth, spriteHeight = spriteImage:getDimensions()
 --Theres are used to store the velocitys of the sprite for both x and y
 spriteVelX, spriteVelY = 0, 0
 
-spriteMaxVelPosX, spriteMaxVelNegX, spriteMaxVelPosY, spriteMaxVelPosY = 50, -50, -50, 50
+spriteMaxVelPosX, spriteMaxVelNegX, spriteMaxVelPosY, spriteMaxVelNegY = 50, -50, -50, 50
 
 
 
@@ -47,6 +47,8 @@ collisionTileWidth, collisionTileHeight = 64, 64
 collisionDistance = 10
 
 levelOneMap_width, levelOneMap_height = 1000, 600
+
+movementCooldown = 0
 
 collisionownoutput = 0 --temp varible
 
@@ -82,7 +84,10 @@ function levelOne:update(dt)
     end
     collisionLeft, collisionRight, collisionUp, collisionDown  = false, false, false, false
     SpriteCollisionChecker()
+    SpriteCollision()
 
+
+  
 
     
     SpriteGravity()
@@ -91,41 +96,14 @@ function levelOne:update(dt)
 
     SpriteVelocityDecay()
 
+    SpriteCollision()
     
-    
 
-    if (collisionDown) then
-        if spriteVelY > 0 then
-            spriteVelY = 0
-        end
-    else
-        spriteY = spriteY + (spriteVelY * dt)
-        movedY = true
+    spriteY = spriteY + (spriteVelY * dt)
 
-    end
-    if collisionUp then
-        if spriteVelY < 0 then
-            spriteVelY = 0
-        end
-    elseif MovedY == false then
-        spriteY = spriteY + (spriteVelY * dt)
-    end
+    spriteX = spriteX + (spriteVelX * dt)
 
-    if collisionLeft then
-        if spriteVelX < 0 then
-            spriteVelX = 0
-        end
-    else
-        spriteX = spriteX + (spriteVelX * dt)
-        movedX = true
-    end
-    if collisionRight then
-        if spriteVelX > 0 then
-            spriteVelX = 0
-        end
-    elseif movedX == false then
-        spriteX = spriteX + (spriteVelX * dt)
-    end
+
     
 end
 
@@ -200,7 +178,8 @@ end
 
 function SpriteGravity()
 
-    if collisionDown == false then 
+    if collisionDown == false and movementCooldown == 0 then 
+        
         print("gravity going down, vely = "..spriteVelY)
         spriteVelY = spriteVelY + gravityStrenth 
     else
@@ -216,7 +195,7 @@ end
 
 
 function SpriteVelocityCalculator()
-    if love.keyboard.isDown("right") then -- and collisionRight == false
+    if love.keyboard.isDown("right") and collisionRight == false then 
         print("key right down")
         if (spriteVelX + acceleration) < spriteMaxVelPosX then 
             spriteVelX = spriteVelX + acceleration 
@@ -238,10 +217,10 @@ function SpriteVelocityCalculator()
         end
     end
 
-    if love.keyboard.isDown("space") and collisionUp == false then
-        if spriteVelY == 0 then --Stop jumping happening when the last jump is already in action
-            spriteVelY = spriteVelY - jumpVel 
-        end
+    if love.keyboard.isDown("space") and collisionUp == false and collisionDown == true then
+       
+        spriteVelY = spriteVelY - jumpVel 
+        
     end
 
 end
@@ -249,43 +228,66 @@ end
 
 
 function SpriteCollisionChecker()
-    -- Determine the indices of the collision tiles that the sprite intersects with
-    spriteLeftIndex = math.max(1, math.floor((spriteX - collisionDistance) / collisionTileWidth) + 1)
-    spriteRightIndex = math.min(levelOneMap_width, math.floor(((spriteX + collisionDistance) + spriteWidth - 1) / collisionTileWidth) + 1)
-    spriteTopIndex = math.max(1, math.floor((spriteY - collisionDistance) / collisionTileHeight) + 1)
-    spriteBottomIndex = math.min(levelOneMap_height, math.floor(((spriteY + collisionDistance) + spriteHeight - 1) / collisionTileHeight) + 1)
+    local spriteBottomY = spriteY + spriteHeight
+    local spriteTopY = spriteY
+    local spriteRightX = spriteX + spriteWidth
+    local spriteLeftX = spriteX
 
+    -- Check for collisions on the Y axis
+    if spriteVelY > 0 then
+        local tileY = math.floor(spriteBottomY / collisionTileHeight) + 1
+        local tileX1 = math.floor(spriteLeftX / collisionTileWidth) + 1
+        local tileX2 = math.floor(spriteRightX / collisionTileWidth) + 1
+        for x = tileX1, tileX2 do
+            if levelOneMap_collisions[tileY][x] ~= 0 then
+                collisionDown = true
+                spriteY = (tileY - 1) * collisionTileHeight - spriteHeight
+                spriteVelY = 0
+                break
+            end
+        end
+    elseif spriteVelY < 0 then
+        local tileY = math.floor(spriteTopY / collisionTileHeight)
+        local tileX1 = math.floor(spriteLeftX / collisionTileWidth) + 1
+        local tileX2 = math.floor(spriteRightX / collisionTileWidth) + 1
+        for x = tileX1, tileX2 do
+            if levelOneMap_collisions[tileY][x] ~= 0 then
+                collisionUp = true
+                spriteY = tileY * collisionTileHeight
+                spriteVelY = 0
+                break
+            end
+        end
+    end
 
-
-
-    -- Check if the sprite intersects with any solid tiles
-    for y = spriteTopIndex, spriteBottomIndex do
-        for x = spriteLeftIndex, spriteRightIndex do
-            if levelOneMap_collisions[y][x] == 1 then
-                -- Check which side the collision occurred on
-                tileX = (x - 1) * collisionTileWidth
-                tileY = (y - 1) * collisionTileHeight
-
-                deltaX = math.max(0, math.min(spriteX + spriteWidth, tileX + collisionTileWidth) - math.max(spriteX, tileX))
-                deltaY = math.max(0, math.min(spriteY + spriteHeight, tileY + collisionTileHeight) - math.max(spriteY, tileY))
-
-                if deltaX > deltaY then
-                    if spriteY + spriteHeight > tileY and spriteY < tileY then
-                        collisionUp = true
-                    elseif spriteY < tileY + collisionTileHeight and spriteY + spriteHeight > tileY + collisionTileHeight then
-                        collisionDown = true
-                    end
-                else
-                    if spriteX + spriteWidth > tileX and spriteX < tileX then
-                        collisionLeft = true
-                    elseif spriteX < tileX + collisionTileWidth and spriteX + spriteWidth > tileX + collisionTileWidth then
-                        collisionRight = true
-                    end
-                end
+    -- Check for collisions on the X axis
+    if spriteVelX > 0 then
+        local tileX = math.floor(spriteRightX / collisionTileWidth) + 1
+        local tileY1 = math.floor(spriteTopY / collisionTileHeight) + 1
+        local tileY2 = math.floor(spriteBottomY / collisionTileHeight) + 1
+        for y = tileY1, tileY2 do
+            if levelOneMap_collisions[y][tileX] ~= 0 then
+                collisionRight = true
+                --spriteX = (tileX - 1) * collisionTileWidth - spriteWidth
+                spriteVelX = 0
+                break
+            end
+        end
+    elseif spriteVelX < 0 then
+        local tileX = math.floor(spriteLeftX / collisionTileWidth)
+        local tileY1 = math.floor(spriteTopY / collisionTileHeight) + 1
+        local tileY2 = math.floor(spriteBottomY / collisionTileHeight) + 1
+        for y = tileY1, tileY2 do
+            if levelOneMap_collisions[y][tileX] ~= 0 then
+                collisionLeft = true
+                --spriteX = tileX * collisionTileWidth
+                spriteVelX = 0
+                break
             end
         end
     end
 end
+
 
 
 local tilesetImage = love.graphics.newImage("test.png")
