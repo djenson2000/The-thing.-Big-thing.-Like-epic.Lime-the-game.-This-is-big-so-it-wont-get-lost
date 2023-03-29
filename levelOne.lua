@@ -137,32 +137,32 @@ end
 
 
 function SpriteVelocityDecay()
-    -- Check if the velocity decay timer has reached a certain value
+    -- Check if the velocity decay timer has reached the decay constant - This controls the rate of the decay 
     if VelocityDecayTimer > VelocityDecayConstant then
-        -- Check if the left arrow key or the right arrow key is pressed to move the sprite
+        -- Check if the left arrow key or the right arrow key is pressed to move the sprite - you dont want to decay the velocity if the player wants to move
         if love.keyboard.isDown("left") then 
             print("Left arrow key inputting movement, not decaying velocity")
-            VelocityDecayTimer = 0
+            VelocityDecayTimer = 0 -- timer is reset so the function can be called again 
         elseif love.keyboard.isDown("right") then
             print("right arrow key inputting movement, not decaying velocity")
             VelocityDecayTimer = 0
         else
             -- If no arrow key is pressed, apply friction to the sprite's horizontal velocity to slow it down
-            if spriteVelX > 0 then
+            if spriteVelX > 0 then -- See which direction the sprite is moving - this checks that it is movingin the right direction
                 -- Decrease the horizontal velocity by a certain amount until it reaches zero if it's positive
-                if spriteVelX - floorFriction < 0 then
-                    spriteVelX = 0.00  
+                if spriteVelX - floorFriction < 0 then -- this ensures that the sprites velocity cannot be set negitive 
+                    spriteVelX = 0.00  --if taking away the friction (amount the velocity decays) would make the velocity negitive, it it set to 0 
                 elseif spriteVelX - floorFriction > 0 then
-                    spriteVelX = spriteVelX - floorFriction      
+                    spriteVelX = spriteVelX - floorFriction    -- If it would not mkae the velocity negitve, take it away to allow for a smooth decay   
                 else 
-                    -- This condition should not be possible, so it prints an error message and sets the velocity to zero to try and add robestentss against glitchs 
+                    -- This condition should not be possible, so it prints an error message and sets the velocity to zero to try and add robestentss against glitchs and maintainablity 
                     print("ERROR - SpriteVelocityDecay had a condition that should not be possible")  
                     spriteVelX = 0
                 end
             end
             if spriteVelX < 0 then
-                -- Increase the horizontal velocity by a certain amount until it reaches zero if it's negative
-                if spriteVelX + floorFriction > 0 then
+                -- Increase the horizontal velocity by a certain amount until it reaches zero if it's negative - this decays the sprites velocity if its moving in the left direction 
+                if spriteVelX + floorFriction > 0 then  -- other than being in the left direction, this is the same code at its core 
                     spriteVelX = 0.00
                 elseif spriteVelX + floorFriction < 0 then
                     spriteVelX = spriteVelX + floorFriction
