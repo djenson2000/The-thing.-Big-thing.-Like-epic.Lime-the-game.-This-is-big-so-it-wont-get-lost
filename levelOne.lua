@@ -137,7 +137,9 @@ end
 
 
 function SpriteVelocityDecay()
+    -- Check if the velocity decay timer has reached a certain value
     if VelocityDecayTimer > VelocityDecayConstant then
+        -- Check if the left arrow key or the right arrow key is pressed to move the sprite
         if love.keyboard.isDown("left") then 
             print("Left arrow key inputting movement, not decaying velocity")
             VelocityDecayTimer = 0
@@ -145,31 +147,32 @@ function SpriteVelocityDecay()
             print("right arrow key inputting movement, not decaying velocity")
             VelocityDecayTimer = 0
         else
-           
+            -- If no arrow key is pressed, apply friction to the sprite's horizontal velocity to slow it down
             if spriteVelX > 0 then
+                -- Decrease the horizontal velocity by a certain amount until it reaches zero if it's positive
                 if spriteVelX - floorFriction < 0 then
                     spriteVelX = 0.00  
-                    
                 elseif spriteVelX - floorFriction > 0 then
                     spriteVelX = spriteVelX - floorFriction      
-                    
                 else 
+                    -- This condition should not be possible, so it prints an error message and sets the velocity to zero to try and add robestentss against glitchs 
                     print("ERROR - SpriteVelocityDecay had a condition that should not be possible")  
                     spriteVelX = 0
                 end
             end
             if spriteVelX < 0 then
+                -- Increase the horizontal velocity by a certain amount until it reaches zero if it's negative
                 if spriteVelX + floorFriction > 0 then
                     spriteVelX = 0.00
-                    
                 elseif spriteVelX + floorFriction < 0 then
                     spriteVelX = spriteVelX + floorFriction
-                   
                 else
+                    -- This condition should not be possible, so it prints an error message and sets the velocity to zero to try and add robestentss against glitchs 
                     print("ERROR - SpriteVelocityDecay had a condition that should not be possible") 
                     spriteVelX = 0
                 end
             end
+            -- Reset the velocity decay timer
             VelocityDecayTimer = 0
         end
     end
@@ -195,34 +198,38 @@ end
 
 
 function SpriteVelocityCalculator()
+    -- Check if the right arrow key is pressed and there's no collision on the right side of the sprite
     if love.keyboard.isDown("right") and collisionRight == false then 
         print("key right down")
+        -- Increase the horizontal velocity by a certain amount until the maximum positive velocity is reached
         if (spriteVelX + acceleration) < spriteMaxVelPosX then 
             spriteVelX = spriteVelX + acceleration 
-            print ("spriteVelX increaced to", spriteVelX)
-
+            print ("spriteVelX increased to", spriteVelX)
+        -- If the maximum positive velocity is reached, set it as the new velocity
         else
             spriteVelX = spriteMaxVelPosX
             print ("spriteVelX has reached spriteMaxVelPosX")
         end
     end
 
+    -- Check if the left arrow key is pressed and there's no collision on the left side of the sprite
     if love.keyboard.isDown("left") and collisionLeft == false then
+        -- Decrease the horizontal velocity by a certain amount until the maximum negative velocity is reached
         if spriteVelX + acceleration > spriteMaxVelNegX then
             spriteVelX = spriteVelX - acceleration 
-            print ("spriteVelX decreced to", spriteVelX)
+            print ("spriteVelX decreased to", spriteVelX)
+        -- If the maximum negative velocity is reached, set it as the new velocity
         else
             spriteVelX = spriteMaxVelNegX
             print ("spriteVelX has reached spriteMaxVelNegX")
         end
     end
 
+    -- Check if the space bar is pressed, there's no collision on top, and there's a collision on the bottom of the sprite
     if love.keyboard.isDown("space") and collisionUp == false and collisionDown == true then
-       
+        -- Decrease the vertical velocity by a certain amount to simulate a jump
         spriteVelY = spriteVelY - jumpVel 
-        
     end
-
 end
 
 
