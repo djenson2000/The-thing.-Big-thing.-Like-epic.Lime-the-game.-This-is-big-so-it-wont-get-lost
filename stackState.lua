@@ -6,13 +6,16 @@ function pushState(newState, params)
 end
 
 function popState()
+    
     stackState[#stackState]:exit()
     return table.remove(stackState)
 end
 
 function changeState(newState)
+    
     popState()
     pushState(newState)
+
 end
 
 function clearState(newState)
