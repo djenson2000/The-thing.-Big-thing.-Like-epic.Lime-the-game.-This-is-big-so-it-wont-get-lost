@@ -10,9 +10,23 @@ function love.load()
 
     handleKey = {}
 
-    pushState(Menu)
+    pushState(login)
 
-
+    -- Check if the userdata file exists, and if not, create it and add a default entry
+    if not love.filesystem.getInfo("userdata.txt") then
+        love.filesystem.write("userdata.txt", "default,0\n") -- this saves in the love roaming appdata folder in windows
+      end
+      
+      -- Load the file containing usernames and scores
+      userdata = {}
+      for line in love.filesystem.lines("userdata.txt") do -- for every username 
+        local username, score = line:match("([^,]+),([^,]+)") -- as a text file it being user, we need to sperate the usernames from there scores, this line of code does that
+        userdata[username] = tonumber(score) -- this creates an internal array of the usernames and there scores
+      end
+    
+      -- Set up the input system
+      input = ""
+      font = love.graphics.newFont(20)
     
 end
 
