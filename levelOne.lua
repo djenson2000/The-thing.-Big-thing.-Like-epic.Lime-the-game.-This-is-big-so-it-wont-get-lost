@@ -183,7 +183,7 @@ function SpriteVelocityCalculator()
 
     if love.keyboard.isDown("space") then
         if spriteVelY == 0 then --Stop jumping happening when the last jump is already in action
-            spriteVelY = spriteVelY + jumpVel 
+            spriteVelY = spriteVelY - jumpVel 
         end
     end
 

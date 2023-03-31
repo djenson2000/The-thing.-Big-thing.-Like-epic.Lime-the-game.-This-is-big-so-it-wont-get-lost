@@ -55,17 +55,13 @@ function love.keypressed(key)
     handleKey[key] = true
     --handleKeyPress(key)
     --handleMenuKeyPress(key)
+
 end
 
 function handleKeyPress(key)
     -- Check if the key pressed is the "enter" key
     
-        
-        if key == "return" then
-            -- The button has been "pressed", so do something (e.g. print a message)
-            print("Enter key pressed pressed!")
-    
-        end
+
 
         return handleKey[key]
 end
