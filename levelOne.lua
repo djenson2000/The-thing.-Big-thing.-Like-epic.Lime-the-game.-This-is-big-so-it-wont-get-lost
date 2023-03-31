@@ -15,15 +15,18 @@ spriteWidth, spriteHeight = spriteImage:getDimensions()
 --Theres are used to store the velocitys of the sprite for both x and y
 spriteVelX, spriteVelY = 0, 0
 
-spriteMaxVelPosX = 200
+spriteMaxVelPosX, spriteMaxVelNegX, spriteMaxVelPosY, spriteMaxVelNegY = 50, -50, -50, 50
 
-spriteMaxVelNegX = -200
+
+
 
 floorFriction = 10
 
-gravityStrenth = 10 
+deltaX, deltaY = 0, 0
 
-jumpVel = 100
+gravityStrenth = 1
+
+jumpVel = 300
 
 -- Where the map begins to draw
 mapX, mapY = 0, 0
@@ -41,7 +44,17 @@ VelocityDecayConstant = 0.05
 
 collisionTileWidth, collisionTileHeight = 64, 64
 
-collisionDistance = 5
+collisionDistance = 10
+
+levelOneMap_width, levelOneMap_height = 1000, 600
+
+movementCooldown = 0
+
+collisionownoutput = 0 --temp varible
+
+movedX, MovedY = false, false
+
+tileX, tileY = 0, 0 
 
 
 
@@ -69,18 +82,28 @@ function levelOne:update(dt)
     if handleKeyPress("escape") then
         changeState(Menu)
     end
-    collisionLeft, collisionRight, collisionUp, collisionDown  = false
+    collisionLeft, collisionRight, collisionUp, collisionDown  = false, false, false, false
     SpriteCollisionChecker()
     SpriteCollision()
+
+
+  
+
     
+    SpriteGravity()
+
     SpriteVelocityCalculator()
 
     SpriteVelocityDecay()
 
+    SpriteCollision()
     
-    
-    spriteX = spriteX + (spriteVelX * dt)
+
     spriteY = spriteY + (spriteVelY * dt)
+
+    spriteX = spriteX + (spriteVelX * dt)
+
+
     
 end
 
@@ -114,44 +137,60 @@ end
 
 
 function SpriteVelocityDecay()
+    -- Check if the velocity decay timer has reached the decay constant - This controls the rate of the decay 
     if VelocityDecayTimer > VelocityDecayConstant then
+        -- Check if the left arrow key or the right arrow key is pressed to move the sprite - you dont want to decay the velocity if the player wants to move
         if love.keyboard.isDown("left") then 
             print("Left arrow key inputting movement, not decaying velocity")
-            VelocityDecayTimer = 0
+            VelocityDecayTimer = 0 -- timer is reset so the function can be called again 
         elseif love.keyboard.isDown("right") then
             print("right arrow key inputting movement, not decaying velocity")
             VelocityDecayTimer = 0
         else
-           
-            if spriteVelX > 0 then
-                if spriteVelX - floorFriction < 0 then
-                    spriteVelX = 0.00  
-                    
+            -- If no arrow key is pressed, apply friction to the sprite's horizontal velocity to slow it down
+            if spriteVelX > 0 then -- See which direction the sprite is moving - this checks that it is movingin the right direction
+                -- Decrease the horizontal velocity by a certain amount until it reaches zero if it's positive
+                if spriteVelX - floorFriction < 0 then -- this ensures that the sprites velocity cannot be set negitive 
+                    spriteVelX = 0.00  --if taking away the friction (amount the velocity decays) would make the velocity negitive, it it set to 0 
                 elseif spriteVelX - floorFriction > 0 then
-                    spriteVelX = spriteVelX - floorFriction      
-                    
+                    spriteVelX = spriteVelX - floorFriction    -- If it would not mkae the velocity negitve, take it away to allow for a smooth decay   
                 else 
+                    -- This condition should not be possible, so it prints an error message and sets the velocity to zero to try and add robestentss against glitchs and maintainablity 
                     print("ERROR - SpriteVelocityDecay had a condition that should not be possible")  
                     spriteVelX = 0
                 end
             end
             if spriteVelX < 0 then
-                if spriteVelX + floorFriction > 0 then
+                -- Increase the horizontal velocity by a certain amount until it reaches zero if it's negative - this decays the sprites velocity if its moving in the left direction 
+                if spriteVelX + floorFriction > 0 then  -- other than being in the left direction, this is the same code at its core 
                     spriteVelX = 0.00
-                    
                 elseif spriteVelX + floorFriction < 0 then
                     spriteVelX = spriteVelX + floorFriction
-                   
                 else
+                    -- This condition should not be possible, so it prints an error message and sets the velocity to zero to try and add robestentss against glitchs 
                     print("ERROR - SpriteVelocityDecay had a condition that should not be possible") 
                     spriteVelX = 0
                 end
             end
+            -- Reset the velocity decay timer
             VelocityDecayTimer = 0
         end
     end
 end
 
+
+function SpriteGravity()
+
+    if collisionDown == false and movementCooldown == 0 then 
+        
+        print("gravity going down, vely = "..spriteVelY)
+        spriteVelY = spriteVelY + gravityStrenth 
+    else
+        spriteVelY = 0 
+        
+    end
+
+end
 
 
 
@@ -159,77 +198,105 @@ end
 
 
 function SpriteVelocityCalculator()
-    if love.keyboard.isDown("right") then -- and collisionRight == false
+    -- Check if the right arrow key is pressed and there's no collision on the right side of the sprite
+    if love.keyboard.isDown("right") and collisionRight == false then 
         print("key right down")
+        -- Increase the horizontal velocity by a certain amount until the maximum positive velocity is reached
         if (spriteVelX + acceleration) < spriteMaxVelPosX then 
             spriteVelX = spriteVelX + acceleration 
-            print ("spriteVelX increaced to", spriteVelX)
-
+            print ("spriteVelX increased to", spriteVelX)
+        -- If the maximum positive velocity is reached, set it as the new velocity
         else
             spriteVelX = spriteMaxVelPosX
             print ("spriteVelX has reached spriteMaxVelPosX")
         end
     end
 
+    -- Check if the left arrow key is pressed and there's no collision on the left side of the sprite
     if love.keyboard.isDown("left") and collisionLeft == false then
+        -- Decrease the horizontal velocity by a certain amount until the maximum negative velocity is reached
         if spriteVelX + acceleration > spriteMaxVelNegX then
             spriteVelX = spriteVelX - acceleration 
-            print ("spriteVelX decreced to", spriteVelX)
+            print ("spriteVelX decreased to", spriteVelX)
+        -- If the maximum negative velocity is reached, set it as the new velocity
         else
             spriteVelX = spriteMaxVelNegX
             print ("spriteVelX has reached spriteMaxVelNegX")
         end
     end
 
-    if love.keyboard.isDown("space") then
-        if spriteVelY == 0 then --Stop jumping happening when the last jump is already in action
-            spriteVelY = spriteVelY - jumpVel 
-        end
+    -- Check if the space bar is pressed, there's no collision on top, and there's a collision on the bottom of the sprite
+    if love.keyboard.isDown("space") and collisionUp == false and collisionDown == true then
+        -- Decrease the vertical velocity by a certain amount to simulate a jump
+        spriteVelY = spriteVelY - jumpVel 
     end
-
 end
 
 
-function SpriteCollisionChecker()
-    -- Determine the indices of the collision tiles that the sprite intersects with
-    local spriteLeftIndex = math.floor((spriteX - collisionDistance) / collisionTileWidth) + 1
-    local spriteRightIndex = math.floor(((spriteX + collisionDistance) + spriteWidth) / collisionTileWidth) + 1
-    local spriteTopIndex = math.floor((spriteY - collisionDistance) / collisionTileHeight) + 1
-    local spriteBottomIndex = math.floor(((spriteY + collisionDistance) + spriteHeight) / collisionTileHeight) + 1
-    
 
-    
-    -- Check if the sprite intersects with any solid tiles
-    for y = spriteTopIndex, spriteBottomIndex do
-        for x = spriteLeftIndex, spriteRightIndex do
-            if levelOneMap_collisions[y][x] == 1 then
-                -- Check which side the collision occurred on
-                local tileX = (x - 1) * collisionTileWidth
-                local tileY = (y - 1) * collisionTileHeight
-                
-                if spriteX + spriteWidth < tileX and spriteX < tileX then
-                    print("Collision Right")
-                    collisionRight = true
-                elseif spriteX < tileX + collisionTileWidth and spriteX + spriteWidth > tileX + collisionTileWidth then
-                    print("Collision Left")
-                    collisionLeft = true
-                end
-                
-                if spriteY + spriteHeight > tileY and spriteY < tileY then
-                    print("Collision Up")
-                    collisionUp = true
-                elseif spriteY < tileY + collisionTileHeight and spriteY + spriteHeight > tileY + collisionTileHeight then
-                    print("Collision Down")
-                    collisionDown = true
-                end
+function SpriteCollisionChecker()
+    local spriteBottomY = spriteY + spriteHeight
+    local spriteTopY = spriteY
+    local spriteRightX = spriteX + spriteWidth
+    local spriteLeftX = spriteX
+
+    -- Check for collisions on the Y axis
+    if spriteVelY > 0 then
+        local tileY = math.floor(spriteBottomY / collisionTileHeight) + 1
+        local tileX1 = math.floor(spriteLeftX / collisionTileWidth) + 1
+        local tileX2 = math.floor(spriteRightX / collisionTileWidth) + 1
+        for x = tileX1, tileX2 do
+            if levelOneMap_collisions[tileY][x] ~= 0 then
+                collisionDown = true
+                spriteY = (tileY - 1) * collisionTileHeight - spriteHeight
+                spriteVelY = 0
+                break
+            end
+        end
+    elseif spriteVelY < 0 then
+        local tileY = math.floor(spriteTopY / collisionTileHeight)
+        local tileX1 = math.floor(spriteLeftX / collisionTileWidth) + 1
+        local tileX2 = math.floor(spriteRightX / collisionTileWidth) + 1
+        for x = tileX1, tileX2 do
+            if levelOneMap_collisions[tileY][x] ~= 0 then
+                collisionUp = true
+                spriteY = tileY * collisionTileHeight
+                spriteVelY = 0
+                break
+            end
+        end
+    end
+
+    -- Check for collisions on the X axis
+    if spriteVelX > 0 then
+        local tileX = math.floor(spriteRightX / collisionTileWidth) + 1
+        local tileY1 = math.floor(spriteTopY / collisionTileHeight) + 1
+        local tileY2 = math.floor(spriteBottomY / collisionTileHeight) + 1
+        for y = tileY1, tileY2 do
+            if levelOneMap_collisions[y][tileX] ~= 0 then
+                collisionRight = true
+                --spriteX = (tileX - 1) * collisionTileWidth - spriteWidth
+                spriteVelX = 0
+                break
+            end
+        end
+    elseif spriteVelX < 0 then
+        local tileX = math.floor(spriteLeftX / collisionTileWidth)
+        local tileY1 = math.floor(spriteTopY / collisionTileHeight) + 1
+        local tileY2 = math.floor(spriteBottomY / collisionTileHeight) + 1
+        for y = tileY1, tileY2 do
+            if levelOneMap_collisions[y][tileX] ~= 0 then
+                collisionLeft = true
+                --spriteX = tileX * collisionTileWidth
+                spriteVelX = 0
+                break
             end
         end
     end
 end
-    
 
 
--- Load the tileset image
+
 local tilesetImage = love.graphics.newImage("test.png")
 
 -- Define the tile width and height
@@ -246,7 +313,7 @@ for y = 0, tilesetImage:getHeight() - tileHeight, tileHeight do
     end
 end
 
--- Define the map array
+
 
 
 -- Define the map width and height
@@ -263,7 +330,10 @@ function levelOne:draw()
         end
     end
     love.graphics.draw(spriteImage, spriteX, spriteY)
+    love.graphics.print(collisionownoutput, 300, 300)
 end
+
+
 
 
 

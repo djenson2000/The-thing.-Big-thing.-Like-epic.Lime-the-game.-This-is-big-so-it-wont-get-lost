@@ -8,7 +8,7 @@ Back_to_menu_BUTTON = {
     text = "Back too menu", -- The text to display on the button
     font = love.graphics.newFont(16), -- The font to use for the button's text
     textColor = { 1, 1, 1 }, -- The color of the button's text (white)
-    clickable = false
+    clickable = true
 }
 
 Mute_sound_BUTTON = {

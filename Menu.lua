@@ -18,7 +18,7 @@ makeMenuButtonUnclickable()
 print ("finishing menu exit tasks")
 end
 
-background = love.graphics.newImage("background.png")
+background = love.graphics.newImage("BACKGROUND1080.png")
 
 function Menu:update(dt)
     

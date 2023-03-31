@@ -3,12 +3,12 @@ local timer = 0
 
 require ("settingsButtons")
 
-
-function settings:enter() 
 makeSettingsButtonsClickable()
+function settings:enter() 
+
 end
 function settings:exit()
-makeSettingsButtonsUnclickable()
+    makeSettingsButtonsUnclickable()
 end
 
 function settings:update(dt)
@@ -17,6 +17,7 @@ function settings:update(dt)
         popState()
     end
     mouse.x, mouse.y = love.mouse.getPosition()
+
 end
 
 function settings:draw()
@@ -28,7 +29,7 @@ end
 
 function love.mousepressed(x, y)
     -- Pass the mouse click coordinates to the handleMouseClick function
-    handlesettingsMouseClick(x, y, Back_to_menu_BUTTON)
+    settingsButtonChecker(x, y)
 end
 
 
